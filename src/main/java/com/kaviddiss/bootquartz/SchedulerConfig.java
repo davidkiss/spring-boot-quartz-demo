@@ -50,6 +50,7 @@ public class SchedulerConfig {
 
         return factory;
     }
+
     @Bean
     public Properties quartzProperties() throws IOException {
         PropertiesFactoryBean propertiesFactoryBean = new PropertiesFactoryBean();
