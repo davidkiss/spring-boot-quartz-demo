@@ -2,6 +2,7 @@ package com.kaviddiss.bootquartz;
 
 import com.kaviddiss.bootquartz.job.SampleJob;
 import com.kaviddiss.bootquartz.spring.AutowiringSpringBeanJobFactory;
+import liquibase.integration.spring.SpringLiquibase;
 import org.quartz.JobDetail;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
@@ -30,7 +31,10 @@ import java.util.Properties;
 public class SchedulerConfig {
 
     @Bean
-    public JobFactory jobFactory(ApplicationContext applicationContext) {
+    public JobFactory jobFactory(ApplicationContext applicationContext,
+        // injecting SpringLiquibase to ensure liquibase is already initialized and created the quartz tables:
+        SpringLiquibase springLiquibase)
+    {
         AutowiringSpringBeanJobFactory jobFactory = new AutowiringSpringBeanJobFactory();
         jobFactory.setApplicationContext(applicationContext);
         return jobFactory;
