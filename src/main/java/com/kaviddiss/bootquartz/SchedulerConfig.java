@@ -50,7 +50,7 @@ public class SchedulerConfig {
         factory.setJobFactory(jobFactory);
 
         factory.setQuartzProperties(quartzProperties());
-        factory.setTriggers(sampleJobTrigger);
+//        factory.setTriggers(sampleJobTrigger);
 
         return factory;
     }
