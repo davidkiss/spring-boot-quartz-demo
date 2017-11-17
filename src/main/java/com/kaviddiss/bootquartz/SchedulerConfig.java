@@ -4,6 +4,7 @@ import com.kaviddiss.bootquartz.job.SampleJob;
 import com.kaviddiss.bootquartz.spring.AutowiringSpringBeanJobFactory;
 import liquibase.integration.spring.SpringLiquibase;
 import org.quartz.JobDetail;
+import org.quartz.Scheduler;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.spi.JobFactory;
@@ -42,8 +43,8 @@ public class SchedulerConfig {
     }
 
     @Bean
-    public SchedulerFactoryBean schedulerFactoryBean(DataSource dataSource, JobFactory jobFactory,
-                                                     @Qualifier("sampleJobTrigger") Trigger sampleJobTrigger) throws IOException {
+    public Scheduler schedulerFactoryBean(DataSource dataSource, JobFactory jobFactory,
+                                          @Qualifier("sampleJobTrigger") Trigger sampleJobTrigger) throws Exception {
         SchedulerFactoryBean factory = new SchedulerFactoryBean();
         // this allows to update triggers in DB when updating settings in config file:
         factory.setOverwriteExistingJobs(true);
@@ -51,9 +52,14 @@ public class SchedulerConfig {
         factory.setJobFactory(jobFactory);
 
         factory.setQuartzProperties(quartzProperties());
-//        factory.setTriggers(sampleJobTrigger);
+        factory.afterPropertiesSet();
 
-        return factory;
+        Scheduler scheduler = factory.getScheduler();
+        scheduler.setJobFactory(jobFactory);
+        scheduler.scheduleJob((JobDetail) sampleJobTrigger.getJobDataMap().get("jobDetail"), sampleJobTrigger);
+
+        scheduler.start();
+        return scheduler;
     }
 
     @Bean
